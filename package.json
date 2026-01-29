@@ -1,0 +1,13 @@
+{
+  "name": "offlinewiki",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "start": "serve public -l 4173",
+    "dev": "serve public -l 4173",
+    "control": "node control-server.js"
+  },
+  "devDependencies": {
+    "serve": "^14.2.1"
+  }
+}

@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="de">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>OfflineWiki</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Manrope:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+  </head>
+  <body data-theme="dark">
+    <div class="page">
+      <div class="top-bar">
+        <div class="chip" id="statusChip">Status: --</div>
+        <div class="top-actions">
+          <button class="lang-btn" id="langSwitchBtn" aria-label="Sprache wechseln">
+            <span class="flag" data-lang="de" title="Deutsch">
+              <svg viewBox="0 0 18 12" aria-hidden="true">
+                <rect width="18" height="12" fill="#000000"></rect>
+                <rect y="4" width="18" height="4" fill="#dd0000"></rect>
+                <rect y="8" width="18" height="4" fill="#ffce00"></rect>
+              </svg>
+            </span>
+            <span class="flag" data-lang="en" title="English">
+              <svg viewBox="0 0 18 12" aria-hidden="true">
+                <rect width="18" height="12" fill="#012169"></rect>
+                <path d="M0 0l18 12M18 0L0 12" stroke="#ffffff" stroke-width="2"></path>
+                <path d="M0 0l18 12M18 0L0 12" stroke="#c8102e" stroke-width="1"></path>
+                <rect x="7" width="4" height="12" fill="#ffffff"></rect>
+                <rect y="4" width="18" height="4" fill="#ffffff"></rect>
+                <rect x="8" width="2" height="12" fill="#c8102e"></rect>
+                <rect y="5" width="18" height="2" fill="#c8102e"></rect>
+              </svg>
+            </span>
+          </button>
+          <button class="settings-btn" id="settingsBtn" aria-label="Einstellungen anzeigen">
+            <span class="settings-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                <path d="M12 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6Z" />
+                <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1Z" />
+              </svg>
+            </span>
+            <span class="settings-text">Einstellungen</span>
+          </button>
+        </div>
+      </div>
+
+      <div class="hero">
+        <h1>OfflineWiki</h1>
+        <p class="small-note">
+          Lokales Wikipedia-Archiv über Kiwix. Alles bleibt im eigenen Netz.
+        </p>
+      </div>
+
+      <section class="card start-menu">
+        <div class="section-title">
+          <h3>Startmenü</h3>
+        </div>
+        <div class="search-row single">
+          <input id="searchInput" type="text" placeholder="Wikipedia durchsuchen (Enter)" />
+        </div>
+
+        <div class="menu-grid">
+          <a class="menu-tile" id="tileHome" href="#" target="_blank" rel="noopener">
+            <span class="tile-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+                <path d="M4 11l8-7 8 7" />
+                <path d="M6 10v9h12v-9" />
+              </svg>
+            </span>
+            <div>
+              <h4>Wikipedia Start</h4>
+              <p>Direkt in das Offline-Wiki springen.</p>
+            </div>
+          </a>
+
+          <button class="menu-tile" id="tileRecent" type="button">
+            <span class="tile-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+                <path d="M3 12a9 9 0 1 0 3-6.7" />
+                <path d="M3 3v4h4" />
+                <path d="M12 7v5l3 2" />
+              </svg>
+            </span>
+            <div>
+              <h4>Zuletzt besucht</h4>
+              <p>Letzte Suchen/Artikel anzeigen.</p>
+            </div>
+          </button>
+
+          <button class="menu-tile" id="tileFavorites" type="button">
+            <span class="tile-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke-width="1.6">
+                <path d="M12 17.5l-6 3 1.2-6.5L2.5 9l6.6-.9L12 2l2.9 6.1 6.6.9-4.7 5 1.2 6.5z" />
+              </svg>
+            </span>
+            <div>
+              <h4>Favoriten</h4>
+              <p>Schnellzugriff auf deine Themen.</p>
+            </div>
+          </button>
+        </div>
+      </section>
+
+      <section class="card" id="recentPanel" hidden>
+        <div class="section-title">
+          <h3>Zuletzt besucht</h3>
+        </div>
+        <div class="list" id="recentList"></div>
+      </section>
+
+      <section class="card" id="favoritesPanel" hidden>
+        <div class="section-title">
+          <h3>Favoriten</h3>
+        </div>
+        <div class="favorites-form">
+          <input id="favoriteLabel" type="text" placeholder="Titel (z.B. KI)" />
+          <input id="favoriteQuery" type="text" placeholder="Suchbegriff (z.B. LLM)" />
+          <button class="btn" id="addFavorite">Hinzufügen</button>
+        </div>
+        <div class="list" id="favoritesList"></div>
+      </section>
+
+      <section class="card" id="serverPanel" hidden>
+        <div class="section-title">
+          <h3>Server Befehle</h3>
+        </div>
+        <div class="command-grid">
+          <div class="code-card">
+            <div>
+              <span class="small-note">Neustart</span>
+              <code>cd /Volumes/MK/kiwix &amp;&amp; docker compose restart</code>
+            </div>
+            <button class="btn secondary" id="copyRestart">Kopieren</button>
+          </div>
+          <div class="code-card">
+            <div>
+              <span class="small-note">Herunterfahren</span>
+              <code>cd /Volumes/MK/kiwix &amp;&amp; docker compose down</code>
+            </div>
+            <button class="btn secondary" id="copyDown">Kopieren</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="credits" id="creditsFooter">
+        <a id="creditsLink" class="credits-link" href="https://github.com/leminkozey" target="_blank" rel="noopener">
+          github.com/leminkozey
+        </a>
+      </footer>
+    </div>
+
+    <div class="overlay" id="settingsOverlay">
+      <div class="settings-modal">
+        <div class="settings-header">
+          <h3>Einstellungen</h3>
+          <button class="close-btn" id="settingsClose" aria-label="Einstellungen schließen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+              <path d="M6 6l12 12" />
+              <path d="M18 6l-12 12" />
+            </svg>
+          </button>
+        </div>
+        <div class="settings-body">
+          <nav class="settings-sidebar">
+            <button class="settings-tab active" data-tab="design">Design</button>
+            <button class="settings-tab" data-tab="server">Server</button>
+            <button class="settings-tab" data-tab="credits">Credits</button>
+          </nav>
+          <div class="settings-content">
+            <div class="settings-panel active" id="panel-design">
+              <h4>Design</h4>
+              <div class="settings-section">
+                <label>Theme</label>
+                <div class="toggle-group" id="themeToggleGroup">
+                  <button class="toggle-option" data-value="dark">Dark</button>
+                  <button class="toggle-option" data-value="light">Light</button>
+                </div>
+              </div>
+              <div class="settings-section">
+                <label>Button Style</label>
+                <div class="toggle-group" id="buttonStyleToggleGroup">
+                  <button class="toggle-option" data-value="default">Default</button>
+                  <button class="toggle-option" data-value="simple">Simple</button>
+                </div>
+              </div>
+              <div class="settings-section">
+                <label for="accentInput">Akzentfarbe</label>
+                <input id="accentInput" type="color" class="color-input" />
+              </div>
+            </div>
+            <div class="settings-panel" id="panel-server">
+              <h4>Server</h4>
+              <div class="settings-section">
+                <label>Links in neuem Tab öffnen</label>
+                <div class="toggle-group" id="openTabToggleGroup">
+                  <button class="toggle-option" data-value="true">An</button>
+                  <button class="toggle-option" data-value="false">Aus</button>
+                </div>
+              </div>
+              <div class="settings-section">
+                <div class="status-row">
+                  <span class="status-dot" id="serverStatusDot"></span>
+                  <div class="small-note" id="serverStatusText">Serverstatus ...</div>
+                </div>
+              </div>
+              <div class="settings-section">
+                <button class="btn secondary" id="showServerCommands">Server Befehle anzeigen</button>
+              </div>
+              <div class="settings-section">
+                <button class="btn danger" id="resetBtn">Zurücksetzen</button>
+              </div>
+            </div>
+            <div class="settings-panel" id="panel-credits">
+              <div class="credits-content">
+                <img class="credits-avatar" id="creditsAvatar" src="https://github.com/leminkozey.png" alt="leminkozey" />
+                <span class="credits-label">made by</span>
+                <a class="credits-name" id="creditsName" href="https://github.com/leminkozey" target="_blank" rel="noopener">leminkozey</a>
+                <span class="credits-version" id="creditsVersion">v1.0.0</span>
+                <a class="credits-repo" id="creditsRepo" href="https://github.com/leminkozey" target="_blank" rel="noopener">
+                  Folge mir auf GitHub
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="settings-divider"></div>
+        <div class="settings-section" style="padding: 16px 20px">
+          <div class="actions">
+            <button class="btn" id="saveBtn">Speichern</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
