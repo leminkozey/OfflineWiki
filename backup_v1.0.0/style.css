@@ -62,6 +62,19 @@ a {
   padding: 32px 20px 80px;
 }
 
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 .theme-toggle {
   display: inline-flex;
   align-items: center;
@@ -983,12 +996,11 @@ input:focus {
   color: #fff;
 }
 
-/* Settings Footer */
-.settings-footer {
-  padding: 16px 20px;
+/* Settings Divider */
+.settings-divider {
+  border: none;
   border-top: 1px solid var(--border);
-  display: flex;
-  justify-content: flex-end;
+  margin: 24px 0 16px;
 }
 
 /* Logout Button */
@@ -1334,6 +1346,25 @@ input:focus {
   border-color: var(--accent);
 }
 
+[data-button-style="simple"] .menu-tile {
+  background: var(--surface);
+  box-shadow: none;
+}
+
+.search-row.single input {
+  width: 100%;
+}
+
+.menu-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+@media (max-width: 900px) {
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .list {
   display: grid;
   gap: 12px;
@@ -1367,7 +1398,20 @@ input:focus {
   margin-bottom: 12px;
 }
 
-/* Simple button style for menu tiles */
+@media (max-width: 900px) {
+  .favorites-form {
+    grid-template-columns: 1fr;
+  }
+}
+
+.menu-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.menu-tile {
+  background: linear-gradient(150deg, rgba(109, 214, 255, 0.08), transparent 65%), var(--surface-2);
+}
+
 [data-button-style="simple"] .menu-tile {
   background: var(--surface) !important;
   border-color: var(--border) !important;
@@ -1394,7 +1438,44 @@ input:focus {
   border-radius: 14px;
 }
 
+.list {
+  display: grid;
+  gap: 12px;
+}
+
+.list-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid var(--border);
+  background: var(--surface-2);
+}
+
+.list-actions {
+  display: flex;
+  gap: 8px;
+}
+
+.empty {
+  color: var(--text-muted);
+  padding: 12px 4px;
+}
+
+.favorites-form {
+  display: grid;
+  grid-template-columns: 1.2fr 1.2fr auto;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
 @media (max-width: 900px) {
+  .menu-grid {
+    grid-template-columns: 1fr;
+  }
+
   .favorites-form {
     grid-template-columns: 1fr;
   }
