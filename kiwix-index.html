@@ -6,8 +6,8 @@
     <title>OfflineWiki</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-      <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
-    <style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+<style>
 /* ═══════════════════════════════════════════════════════════════════
    OfflineWiki v1.1.0 – Glassmorphic Design System
    A distinctive, refined interface with depth and luminosity
@@ -372,10 +372,11 @@ a:hover {
 .tile-icon {
   position: relative;
   z-index: 1;
-  width: 44px;
-  height: 44px;
-  display: grid;
-  place-items: center;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   background: var(--accent-subtle);
   border: 1px solid var(--border-glow);
   border-radius: var(--radius-md);
@@ -383,16 +384,51 @@ a:hover {
 }
 
 .menu-tile:hover .tile-icon {
-  transform: scale(1.05);
+  transform: scale(1.1);
   border-color: var(--accent);
+  background: var(--accent-glow);
 }
 
 .tile-icon svg {
-  width: 22px;
-  height: 22px;
+  width: 24px;
+  height: 24px;
   stroke: var(--accent);
   stroke-width: 1.8;
   fill: none;
+  transition: transform 0.4s var(--ease-spring);
+}
+
+/* Icon animations on hover */
+.menu-tile:hover .tile-icon svg {
+  transform: scale(1.1);
+}
+
+#tileHome:hover .tile-icon svg {
+  animation: iconPulse 0.6s var(--ease-spring);
+}
+
+#tileRecent:hover .tile-icon svg {
+  animation: iconSpin 0.8s var(--ease-out-expo);
+}
+
+#tileFavorites:hover .tile-icon svg {
+  animation: iconBounce 0.5s var(--ease-spring);
+}
+
+@keyframes iconPulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.2); }
+}
+
+@keyframes iconSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(-360deg); }
+}
+
+@keyframes iconBounce {
+  0%, 100% { transform: translateY(0); }
+  30% { transform: translateY(-4px); }
+  60% { transform: translateY(2px); }
 }
 
 .menu-tile h4 {
@@ -414,11 +450,16 @@ a:hover {
 }
 
 /* Simple button style variant */
+[data-button-style="simple"] .menu-grid {
+  gap: 10px;
+}
+
 [data-button-style="simple"] .menu-tile {
-  padding: 24px;
+  padding: 16px;
   align-items: center;
   justify-content: center;
   text-align: center;
+  min-height: auto;
 }
 
 [data-button-style="simple"] .menu-tile h4,
@@ -427,13 +468,13 @@ a:hover {
 }
 
 [data-button-style="simple"] .tile-icon {
-  width: 56px;
-  height: 56px;
+  width: 44px;
+  height: 44px;
 }
 
 [data-button-style="simple"] .tile-icon svg {
-  width: 26px;
-  height: 26px;
+  width: 22px;
+  height: 22px;
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1339,8 +1380,8 @@ input[type='password']:focus {
   background: var(--accent);
   color: #fff;
 }
-    </style>
-  </head>
+</style>
+</head>
   <body data-theme="dark">
     <div class="page">
       <div class="top-bar">
@@ -1601,7 +1642,7 @@ input[type='password']:focus {
         </div>
       </div>
     </div>
-      <script>
+  <script>
 (() => {
   const storageKey = "offlinewiki.settings";
   const recentKey = "offlinewiki.recent";
@@ -2167,7 +2208,6 @@ input[type='password']:focus {
 
   init();
 })();
-
-    </script>
-  </body>
+</script>
+</body>
 </html>
