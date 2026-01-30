@@ -27,6 +27,7 @@
   const state = { ...defaults };
   let recent = [];
   let favorites = [];
+  let serverOnline = false;
   const knownLanguages = ["de", "en"];
 
   const inferBaseUrl = () => {
@@ -91,8 +92,9 @@
     const slug = state.zimSlug.replace(/^\//, "");
     return {
       base,
+      slug,
       home: `${base}/${slug}/`,
-      search: `${base}/search`
+      search: (pattern) => `${base}/search?content=${slug}&pattern=${encodeURIComponent(pattern)}`
     };
   };
 
@@ -265,12 +267,15 @@
       const res = await fetch(`${base}/`, { method: "GET", signal: controller.signal });
       clearTimeout(timeout);
       if (res.ok) {
+        serverOnline = true;
         updateStatus(true, `Server erreichbar: ${base}`);
       } else {
+        serverOnline = false;
         updateStatus(false, `Server antwortet (${res.status}).`);
       }
     } catch (err) {
       clearTimeout(timeout);
+      serverOnline = false;
       updateStatus(false, "Server nicht erreichbar.");
     }
   };
@@ -294,7 +299,7 @@
     const { search } = buildUrls();
     list.innerHTML = recent
       .map((item) => {
-        const url = `${search}?pattern=${encodeURIComponent(item.query)}`;
+        const url = search(item.query);
         return `
           <div class="list-item">
             <div>
@@ -318,7 +323,7 @@
     const { search } = buildUrls();
     list.innerHTML = favorites
       .map((fav, idx) => {
-        const url = `${search}?pattern=${encodeURIComponent(fav.query)}`;
+        const url = search(fav.query);
         return `
           <div class="list-item">
             <div>
@@ -346,9 +351,12 @@
 
   const openSearch = (query) => {
     if (!query || !query.trim()) return;
+    if (!serverOnline) {
+      showSaveToast("Server offline - Suche nicht möglich");
+      return;
+    }
     const { search } = buildUrls();
-    const q = encodeURIComponent(query.trim());
-    const url = `${search}?pattern=${q}`;
+    const url = search(query.trim());
     const target = state.openInNewTab ? "_blank" : "_self";
     const win = window.open(url, target);
     if (!win) window.location.href = url;
