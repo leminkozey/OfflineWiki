@@ -6,12 +6,14 @@
     <title>OfflineWiki</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
-<style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+    <style>
 /* ═══════════════════════════════════════════════════════════════════
    OfflineWiki v1.1.0 – Glassmorphic Design System
    A distinctive, refined interface with depth and luminosity
    ═══════════════════════════════════════════════════════════════════ */
+
+
 
 :root {
   /* Core palette - Deep midnight with cyan luminescence */
@@ -335,6 +337,7 @@ a:hover {
 .menu-tile {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 12px;
   padding: 20px;
   background: var(--surface-elevated);
@@ -459,7 +462,6 @@ a:hover {
   align-items: center;
   justify-content: center;
   text-align: center;
-  min-height: auto;
 }
 
 [data-button-style="simple"] .menu-tile h4,
@@ -1380,8 +1382,8 @@ input[type='password']:focus {
   background: var(--accent);
   color: #fff;
 }
-</style>
-</head>
+    </style>
+  </head>
   <body data-theme="dark">
     <div class="page">
       <div class="top-bar">
@@ -1642,7 +1644,8 @@ input[type='password']:focus {
         </div>
       </div>
     </div>
-  <script>
+
+    <script>
 (() => {
   const storageKey = "offlinewiki.settings";
   const recentKey = "offlinewiki.recent";
@@ -2208,6 +2211,6 @@ input[type='password']:focus {
 
   init();
 })();
-</script>
-</body>
+    </script>
+  </body>
 </html>
