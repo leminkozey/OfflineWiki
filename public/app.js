@@ -20,7 +20,7 @@
 
   const credits = {
     username: "leminkozey",
-    version: "v2.0.0",
+    version: "v2.2.0",
     repoUrl: "https://github.com/leminkozey/OfflineWiki",
     repoLabel: "bleib up to date"
   };
