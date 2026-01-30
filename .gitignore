@@ -1,0 +1,14 @@
+# Backup
+backup_v1.0.0/
+
+# macOS
+.DS_Store
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Logs
+*.log
