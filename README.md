@@ -2,6 +2,9 @@
 
 Eine Web-Anwendung zum Durchsuchen deines lokalen Wikipedia-Archivs mit Kiwix.
 
+![Dark Mode](<img width="651" height="582" alt="Image" src="https://github.com/user-attachments/assets/f34aebf9-0e67-4546-a016-897d79e32207" />)
+![Light Mode](<img width="999" height="816" alt="Image" src="https://github.com/user-attachments/assets/fc0dd485-c89e-49e4-84f1-c3f28b436fc9" />)
+
 ## Was ist das?
 
 OfflineWiki ist eine moderne Oberfläche für dein Kiwix Wikipedia-Archiv:
@@ -11,6 +14,13 @@ OfflineWiki ist eine moderne Oberfläche für dein Kiwix Wikipedia-Archiv:
 - **Verlauf** - Zuletzt besuchte Artikel wiederfinden
 - **Sprachwechsel** - Zwischen verschiedenen Wikipedia-Sprachen wechseln
 - **Server-Status** - Kiwix-Server Verbindung prüfen
+
+## Features v2.0.0
+
+- **Glassmorphic Design** - Modernes UI mit Blur-Effekten
+- **Theme-Switcher** - Dark / System / Light mit Animationen
+- **Auto-Save** - Einstellungen speichern automatisch
+- **Responsive** - Funktioniert auf Desktop und Mobile
 
 ## Für wen ist das?
 
@@ -69,19 +79,15 @@ docker compose up -d
 
 ### 4. Config anpassen
 
-Öffne `public/config.js` und trage deine ZIM-Dateien ein:
+Öffne `public/app.js` und passe die ZIM-Slugs an:
 
 ```javascript
-window.OFFLINEWIKI_CONFIG = {
-  baseUrl: "AUTO",  // oder "http://192.168.1.100:8080"
-
-  zimSlugs: {
-    de: "wikipedia_de_all_maxi_2025-09",  // Dein Dateiname ohne .zim
+const defaults = {
+  zimSlug: "wikipedia_de_all_maxi_2025-09",  // Dein Dateiname ohne .zim
+  languageSlugs: {
+    de: "wikipedia_de_all_maxi_2025-09",
     en: "wikipedia_en_all_maxi_2025-08"
-  },
-
-  defaultLanguage: "de",
-  openInNewTab: true
+  }
 };
 ```
 
@@ -92,39 +98,7 @@ window.OFFLINEWIKI_CONFIG = {
 
 ### 5. Website öffnen
 
-Öffne `public/index.html` direkt im Browser.
-
-Oder starte einen lokalen Server:
-
-```bash
-# Mit Python
-cd OfflineWiki/public
-python3 -m http.server 3000
-
-# Dann öffnen: http://localhost:3000
-```
-
-## Konfiguration
-
-Die Datei `public/config.js` enthält alle Einstellungen:
-
-| Option | Beschreibung |
-|--------|--------------|
-| `baseUrl` | Kiwix Server URL. `"AUTO"` erkennt automatisch `localhost:8080` |
-| `zimSlugs` | Deine ZIM-Dateien (Dateiname ohne `.zim`) |
-| `defaultLanguage` | Standard-Sprache beim ersten Besuch |
-| `openInNewTab` | Links in neuem Tab öffnen |
-
-### Beispiel mit mehreren Sprachen
-
-```javascript
-zimSlugs: {
-  de: "wikipedia_de_all_maxi_2025-09",
-  en: "wikipedia_en_all_maxi_2025-08",
-  fr: "wikipedia_fr_all_maxi_2024-01",
-  es: "wikipedia_es_all_maxi_2024-01"
-}
-```
+Öffne `http://localhost:8080` im Browser.
 
 ## Features
 
@@ -138,7 +112,7 @@ Speichere häufig genutzte Suchbegriffe für schnellen Zugriff.
 
 ### Einstellungen
 
-- **Design**: Theme (Dark/Light), Button-Stil, Akzentfarbe
+- **Design**: Theme (Dark/System/Light), Button-Stil, Akzentfarbe
 - **Server**: Server-Status, Befehle zum Kopieren
 - **Credits**: Entwickler-Info
 
@@ -172,35 +146,19 @@ cd ~/kiwix && docker compose logs -f
 
 ### Sprache wechselt nicht
 
-1. Prüfe ob der ZIM-Slug in `config.js` korrekt ist
+1. Prüfe ob der ZIM-Slug in `app.js` korrekt ist
 2. Der Slug muss exakt dem Dateinamen entsprechen (ohne `.zim`)
-
-### ZIM-Slug herausfinden
-
-```bash
-# Alle ZIM-Dateien auflisten
-ls ~/kiwix/data/*.zim
-
-# Beispiel Output:
-# wikipedia_de_all_maxi_2025-09.zim
-# → Slug ist: wikipedia_de_all_maxi_2025-09
-```
 
 ## Ordnerstruktur
 
 ```
-OfflineWiki/              # Dieses Repository
+OfflineWiki/
 ├── public/
 │   ├── index.html
-│   ├── app.js
-│   ├── style.css
-│   └── config.js         # ⬅️ HIER ANPASSEN
+│   ├── app.js           # Config + Logik
+│   └── style.css
+├── kiwix-index.html     # Kombinierte Datei für Kiwix
 └── README.md
-
-~/kiwix/                  # Kiwix Server (separat)
-├── data/
-│   └── *.zim             # Deine ZIM-Dateien
-└── docker-compose.yml
 ```
 
 ## Credits
