@@ -105,8 +105,16 @@
     }
   };
 
+  const updateAccentPickerUI = (accent) => {
+    const picker = document.getElementById("accentPicker");
+    if (!picker) return;
+    picker.querySelectorAll(".accent-option").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.color === accent);
+    });
+  };
+
   const updateInputs = () => {
-    document.getElementById("accentInput").value = state.accent;
+    updateAccentPickerUI(state.accent);
     updateThemeToggleUI(state.theme);
     updateOpenTabToggleUI(state.openInNewTab);
     updateButtonStyleToggleUI(state.buttonStyle);
@@ -447,15 +455,15 @@
       });
     });
 
-    // Auto-save accent color on change
-    document.getElementById("accentInput").addEventListener("input", () => {
-      state.accent = document.getElementById("accentInput").value || defaults.accent;
-      applyAppearance();
-      save();
-    });
-
-    document.getElementById("accentInput").addEventListener("change", () => {
-      showSaveToast();
+    // Accent color picker
+    document.getElementById("accentPicker").querySelectorAll(".accent-option").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.accent = btn.dataset.color;
+        applyAppearance();
+        updateAccentPickerUI(state.accent);
+        save();
+        showSaveToast();
+      });
     });
 
     document.getElementById("showServerCommands").addEventListener("click", () => {
