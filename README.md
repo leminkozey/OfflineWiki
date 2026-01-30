@@ -2,8 +2,8 @@
 
 Eine Web-Anwendung zum Durchsuchen deines lokalen Wikipedia-Archivs mit Kiwix.
 
-![Dark Mode](<img width="651" height="582" alt="Image" src="https://github.com/user-attachments/assets/f34aebf9-0e67-4546-a016-897d79e32207" />)
-![Light Mode](<img width="999" height="816" alt="Image" src="https://github.com/user-attachments/assets/fc0dd485-c89e-49e4-84f1-c3f28b436fc9" />)
+(<img width="651" height="582" alt="Image" src="https://github.com/user-attachments/assets/f34aebf9-0e67-4546-a016-897d79e32207" />)
+(<img width="999" height="816" alt="Image" src="https://github.com/user-attachments/assets/fc0dd485-c89e-49e4-84f1-c3f28b436fc9" />)
 
 ## Was ist das?
 
