@@ -3,29 +3,25 @@
   const recentKey = "offlinewiki.recent";
   const favoritesKey = "offlinewiki.favorites";
 
-  // Lade Konfiguration aus config.js (falls vorhanden)
-  const config = window.OFFLINEWIKI_CONFIG || {};
-  const configSlugs = config.zimSlugs || {};
-
   const defaults = {
-    baseUrl: config.baseUrl || "AUTO",
-    zimSlug: configSlugs[config.defaultLanguage] || configSlugs.de || "wikipedia_de_all_maxi_2025-09",
-    openInNewTab: config.openInNewTab !== undefined ? config.openInNewTab : true,
+    baseUrl: "AUTO",
+    zimSlug: "wikipedia_de_all_maxi_2025-09",
+    openInNewTab: true,
     theme: "dark",
     buttonStyle: "default",
-    accent: "#6dd6ff",
-    language: config.defaultLanguage || "de",
+    accent: "#00d4ff",
+    language: "de",
     languageSlugs: {
-      de: configSlugs.de || "wikipedia_de_all_maxi_2025-09",
-      en: configSlugs.en || "wikipedia_en_all_maxi_2025-08",
-      ...configSlugs
+      de: "wikipedia_de_all_maxi_2025-09",
+      en: "wikipedia_en_all_maxi_2025-08"
     }
   };
 
   const credits = {
     username: "leminkozey",
-    version: "v1.0.0",
-    repoLabel: "Folge mir auf GitHub"
+    version: "v2.0.0",
+    repoUrl: "https://github.com/leminkozey/OfflineWiki",
+    repoLabel: "bleib up to date"
   };
 
   const state = { ...defaults };
@@ -116,8 +112,13 @@
     updateButtonStyleToggleUI(state.buttonStyle);
   };
 
+  const getSystemTheme = () => {
+    return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  };
+
   const applyAppearance = () => {
-    document.body.setAttribute("data-theme", state.theme);
+    const effectiveTheme = state.theme === "system" ? getSystemTheme() : state.theme;
+    document.body.setAttribute("data-theme", effectiveTheme);
     if (state.buttonStyle === "simple") {
       document.body.setAttribute("data-button-style", "simple");
     } else {
@@ -131,12 +132,22 @@
     document.documentElement.lang = state.language === "en" ? "en" : "de";
   };
 
-  const updateThemeToggleUI = (theme) => {
-    const group = document.getElementById("themeToggleGroup");
-    if (!group) return;
-    group.querySelectorAll(".toggle-option").forEach((btn) => {
+  const updateThemeSwitcherUI = (theme) => {
+    const switcher = document.getElementById("themeSwitcher");
+    if (!switcher) return;
+
+    const options = ["dark", "system", "light"];
+    const position = options.indexOf(theme);
+    switcher.setAttribute("data-position", position >= 0 ? position : 0);
+
+    switcher.querySelectorAll(".theme-option").forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.value === theme);
     });
+  };
+
+  // Legacy function for compatibility
+  const updateThemeToggleUI = (theme) => {
+    updateThemeSwitcherUI(theme);
   };
 
   const updateOpenTabToggleUI = (openInNewTab) => {
@@ -155,22 +166,42 @@
     });
   };
 
+  let saveToastTimeout = null;
+  const showSaveToast = (message = "Gespeichert") => {
+    let toast = document.querySelector(".save-toast");
+    if (!toast) {
+      toast = document.createElement("div");
+      toast.className = "save-toast";
+      document.body.appendChild(toast);
+    }
+    toast.textContent = message;
+    toast.classList.add("visible");
+
+    if (saveToastTimeout) clearTimeout(saveToastTimeout);
+    saveToastTimeout = setTimeout(() => {
+      toast.classList.remove("visible");
+    }, 1500);
+  };
+
   const applyCredits = () => {
-    const url = `https://github.com/${credits.username}`;
+    const profileUrl = `https://github.com/${credits.username}`;
     const avatar = document.getElementById("creditsAvatar");
     const name = document.getElementById("creditsName");
     const repo = document.getElementById("creditsRepo");
     const version = document.getElementById("creditsVersion");
     const footerLink = document.getElementById("creditsLink");
 
-    if (avatar) avatar.src = `${url}.png`;
+    if (avatar) avatar.src = `${profileUrl}.png`;
     if (name) {
       name.textContent = credits.username;
-      name.href = url;
+      name.href = profileUrl;
     }
-    if (repo) repo.href = url;
+    if (repo) {
+      repo.href = credits.repoUrl;
+      repo.textContent = credits.repoLabel;
+    }
     if (version) version.textContent = credits.version;
-    if (footerLink) footerLink.href = url;
+    if (footerLink) footerLink.href = profileUrl;
   };
 
   const updateLanguageButton = () => {
@@ -286,13 +317,14 @@
   };
 
   const openSearch = (query) => {
+    if (!query || !query.trim()) return;
     const { search } = buildUrls();
-    const q = encodeURIComponent(query || "");
-    const url = q ? `${search}?pattern=${q}` : search;
+    const q = encodeURIComponent(query.trim());
+    const url = `${search}?pattern=${q}`;
     const target = state.openInNewTab ? "_blank" : "_self";
     const win = window.open(url, target);
     if (!win) window.location.href = url;
-    recordRecent(query);
+    recordRecent(query.trim());
   };
 
   const initSettingsOverlay = () => {
@@ -373,13 +405,27 @@
 
     randomizeFavoritePlaceholders();
 
-    document.getElementById("themeToggleGroup").querySelectorAll(".toggle-option").forEach((btn) => {
-      btn.addEventListener("click", () => {
-        state.theme = btn.dataset.value;
-        applyAppearance();
-        updateThemeToggleUI(state.theme);
-        save();
+    // Theme Switcher with animation
+    const themeSwitcher = document.getElementById("themeSwitcher");
+    if (themeSwitcher) {
+      themeSwitcher.querySelectorAll(".theme-option").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          state.theme = btn.dataset.value;
+          applyAppearance();
+          updateThemeSwitcherUI(state.theme);
+          save();
+          showSaveToast();
+        });
       });
+      // Initialize position
+      updateThemeSwitcherUI(state.theme);
+    }
+
+    // Listen for system theme changes
+    window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change", () => {
+      if (state.theme === "system") {
+        applyAppearance();
+      }
     });
 
     document.getElementById("openTabToggleGroup").querySelectorAll(".toggle-option").forEach((btn) => {
@@ -387,6 +433,7 @@
         state.openInNewTab = btn.dataset.value === "true";
         updateOpenTabToggleUI(state.openInNewTab);
         save();
+        showSaveToast();
       });
     });
 
@@ -396,7 +443,19 @@
         applyAppearance();
         updateButtonStyleToggleUI(state.buttonStyle);
         save();
+        showSaveToast();
       });
+    });
+
+    // Auto-save accent color on change
+    document.getElementById("accentInput").addEventListener("input", () => {
+      state.accent = document.getElementById("accentInput").value || defaults.accent;
+      applyAppearance();
+      save();
+    });
+
+    document.getElementById("accentInput").addEventListener("change", () => {
+      showSaveToast();
     });
 
     document.getElementById("showServerCommands").addEventListener("click", () => {
@@ -423,17 +482,6 @@
       copy(e.currentTarget, "cd /Volumes/MK/kiwix && docker compose down");
     });
 
-    document.getElementById("saveBtn").addEventListener("click", () => {
-      state.accent = document.getElementById("accentInput").value || defaults.accent;
-      save();
-      applyAppearance();
-      applyLanguage();
-      updateLanguageButton();
-      updateLinks();
-      updateInputs();
-      checkServer();
-    });
-
     document.getElementById("resetBtn").addEventListener("click", () => {
       Object.assign(state, defaults);
       save();
@@ -441,8 +489,10 @@
       applyLanguage();
       updateLanguageButton();
       updateInputs();
+      updateThemeSwitcherUI(state.theme);
       updateLinks();
       checkServer();
+      showSaveToast("Zurückgesetzt");
     });
 
     document.getElementById("searchInput").addEventListener("keydown", (event) => {
