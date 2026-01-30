@@ -16,6 +16,8 @@
 
 
 :root {
+  --glow-strength: 1;
+
   /* Core palette - Deep midnight with cyan luminescence */
   --bg: #06080f;
   --surface: rgba(16, 22, 36, 0.72);
@@ -30,17 +32,19 @@
 
   /* Accent - Electric cyan with subtle glow */
   --accent: #00d4ff;
-  --accent-glow: rgba(0, 212, 255, 0.15);
-  --accent-subtle: rgba(0, 212, 255, 0.08);
+  --accent-rgb: 0 212 255;
+  --accent-glow: rgb(var(--accent-rgb) / calc(0.15 * var(--glow-strength)));
+  --accent-subtle: rgb(var(--accent-rgb) / calc(0.08 * var(--glow-strength)));
   --accent-strong: #00b8e0;
+  --border-glow: rgb(var(--accent-rgb) / calc(0.25 * var(--glow-strength)));
 
   /* Secondary accent - Warm coral */
   --accent-warm: #ff6b4a;
-  --accent-warm-glow: rgba(255, 107, 74, 0.12);
+  --accent-warm-rgb: 255 107 74;
+  --accent-warm-glow: rgb(var(--accent-warm-rgb) / calc(0.12 * var(--glow-strength)));
 
   /* Structural */
   --border: rgba(255, 255, 255, 0.06);
-  --border-glow: rgba(0, 212, 255, 0.25);
   --glass-blur: 16px;
   --shadow-ambient: 0 4px 20px rgba(0, 0, 0, 0.25);
   --shadow-elevated: 0 12px 40px rgba(0, 0, 0, 0.35);
@@ -54,6 +58,12 @@
   /* Motion */
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* Status glows */
+  --status-warn-rgb: 249 115 22;
+  --status-ok-rgb: 34 197 94;
+  --status-warn-glow: rgb(var(--status-warn-rgb) / calc(0.6 * var(--glow-strength)));
+  --status-ok-glow: rgb(var(--status-ok-rgb) / calc(0.6 * var(--glow-strength)));
 }
 
 [data-theme='light'] {
@@ -68,15 +78,13 @@
   --text-muted: #7889a8;
 
   --accent: #0095cc;
-  --accent-glow: rgba(0, 149, 204, 0.12);
-  --accent-subtle: rgba(0, 149, 204, 0.06);
+  --accent-rgb: 0 149 204;
   --accent-strong: #007aad;
 
   --accent-warm: #e8553d;
-  --accent-warm-glow: rgba(232, 85, 61, 0.08);
+  --accent-warm-rgb: 232 85 61;
 
   --border: rgba(0, 20, 60, 0.08);
-  --border-glow: rgba(0, 149, 204, 0.3);
   --shadow-ambient: 0 8px 32px rgba(0, 20, 60, 0.08);
   --shadow-elevated: 0 24px 64px rgba(0, 20, 60, 0.12);
 }
@@ -109,7 +117,7 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse 80% 50% at 50% 0%, var(--accent-subtle), transparent 50%);
+  background: radial-gradient(ellipse 90% 60% at 50% 0%, var(--accent-subtle), transparent 65%);
   pointer-events: none;
   z-index: 0;
 }
@@ -246,7 +254,7 @@ a:hover {
   right: 0;
   height: 1px;
   background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.1) 50%, transparent 100%);
-  opacity: 0.6;
+  opacity: 0.8;
 }
 
 .card:hover {
@@ -262,11 +270,11 @@ a:hover {
   top: -40%;
   left: 0;
   right: 0;
-  height: 120px;
+  height: 160px;
   background: radial-gradient(ellipse 60% 50% at 50% 50%, var(--accent-glow), transparent 70%);
-  opacity: 0.4;
+  opacity: 0.6;
   pointer-events: none;
-  filter: blur(30px);
+  filter: blur(calc(40px * var(--glow-strength)));
 }
 
 .section-title {
@@ -313,7 +321,7 @@ a:hover {
 
 .search-row input:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-subtle), var(--shadow-ambient);
+  box-shadow: 0 0 0 calc(4px * var(--glow-strength)) var(--accent-subtle), 0 0 calc(14px * var(--glow-strength)) var(--accent-glow), var(--shadow-ambient);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -365,7 +373,7 @@ a:hover {
 .menu-tile:hover {
   transform: translateY(-3px);
   border-color: var(--accent);
-  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 14px 36px rgba(0, 0, 0, 0.25), 0 0 calc(18px * var(--glow-strength)) var(--accent-glow);
 }
 
 .menu-tile:hover::before {
@@ -390,6 +398,7 @@ a:hover {
   transform: scale(1.1);
   border-color: var(--accent);
   background: var(--accent-glow);
+  box-shadow: 0 0 calc(16px * var(--glow-strength)) var(--accent-glow);
 }
 
 .tile-icon svg {
@@ -887,7 +896,7 @@ a:hover {
 }
 
 .theme-option.active svg {
-  filter: drop-shadow(0 0 8px rgba(255, 255, 255, 0.5));
+  filter: drop-shadow(0 0 calc(12px * var(--glow-strength)) rgb(255 255 255 / calc(0.6 * var(--glow-strength))));
 }
 
 /* Sliding indicator */
@@ -983,6 +992,103 @@ a:hover {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
+   Glow Strength Slider
+   ═══════════════════════════════════════════════════════════════════ */
+
+.glow-control {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.glow-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  color: var(--text-muted);
+}
+
+.glow-icon svg {
+  width: 100%;
+  height: 100%;
+}
+
+.glow-icon[data-variant="high"] {
+  color: var(--accent);
+}
+
+.glow-slider {
+  --glow-percent: 50%;
+  --glow-track-height: 6px;
+  --glow-thumb-size: 26px;
+  --glow-thumb-icon: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.5' stroke-linecap='round'><circle cx='12' cy='12' r='4' fill='none'/><path d='M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1'/></svg>");
+  -webkit-appearance: none;
+  appearance: none;
+  width: var(--glow-slider-width, 200px);
+  max-width: 100%;
+  height: 28px;
+  background: transparent;
+  cursor: pointer;
+}
+
+.glow-slider:focus {
+  outline: none;
+}
+
+.glow-slider::-webkit-slider-runnable-track {
+  height: var(--glow-track-height);
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong) var(--glow-percent), var(--border) var(--glow-percent));
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.glow-slider::-moz-range-track {
+  height: var(--glow-track-height);
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong) var(--glow-percent), var(--border) var(--glow-percent));
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--border);
+}
+
+.glow-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: var(--glow-thumb-size);
+  height: var(--glow-thumb-size);
+  border-radius: 50%;
+  background-color: var(--accent);
+  background-image: var(--glow-thumb-icon);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20px 20px;
+  color: #fff;
+  margin-top: calc((var(--glow-track-height) - var(--glow-thumb-size)) / 2);
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 0 calc(10px * var(--glow-strength)) var(--accent-glow);
+}
+
+.glow-slider::-moz-range-thumb {
+  width: var(--glow-thumb-size);
+  height: var(--glow-thumb-size);
+  border-radius: 50%;
+  background-color: var(--accent);
+  background-image: var(--glow-thumb-icon);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 20px 20px;
+  color: #fff;
+  transform: translateY(calc((var(--glow-track-height) - var(--glow-thumb-size)) / 2));
+  border: 1px solid var(--border-glow);
+  box-shadow: 0 0 calc(10px * var(--glow-strength)) var(--accent-glow);
+}
+
+.glow-slider::-moz-range-progress {
+  height: var(--glow-track-height);
+  background: linear-gradient(90deg, var(--accent) 0%, var(--accent-strong) 100%);
+  border-radius: 999px;
+}
+
+/* ═══════════════════════════════════════════════════════════════════
    Accent Color Picker
    ═══════════════════════════════════════════════════════════════════ */
 
@@ -1011,7 +1117,7 @@ a:hover {
 .accent-option.active {
   border-color: var(--text);
   transform: scale(1.1);
-  box-shadow: 0 0 0 3px var(--surface-2), 0 4px 12px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 0 0 calc(3px * var(--glow-strength)) var(--surface-2), 0 4px 12px rgba(0, 0, 0, 0.3), 0 0 calc(16px * var(--glow-strength)) var(--accent-glow);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1043,7 +1149,7 @@ a:hover {
   height: 10px;
   border-radius: 50%;
   background: #f97316;
-  box-shadow: 0 0 12px rgba(249, 115, 22, 0.5);
+  box-shadow: 0 0 calc(18px * var(--glow-strength)) var(--status-warn-glow);
   animation: pulse 2s infinite;
 }
 
@@ -1054,7 +1160,7 @@ a:hover {
 
 .status-dot.ok {
   background: #22c55e;
-  box-shadow: 0 0 12px rgba(34, 197, 94, 0.5);
+  box-shadow: 0 0 calc(18px * var(--glow-strength)) var(--status-ok-glow);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1077,7 +1183,7 @@ a:hover {
   border-radius: 50%;
   border: 3px solid var(--accent);
   margin-bottom: 18px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2), 0 0 calc(18px * var(--glow-strength)) var(--accent-glow);
   transition: transform 0.3s var(--ease-spring);
 }
 
@@ -1199,7 +1305,7 @@ input[type='password']::placeholder {
 input[type='text']:focus,
 input[type='password']:focus {
   border-color: var(--accent);
-  box-shadow: 0 0 0 3px var(--accent-subtle);
+  box-shadow: 0 0 0 calc(3px * var(--glow-strength)) var(--accent-subtle);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1284,7 +1390,7 @@ input[type='password']:focus {
   color: #fff;
   background: var(--accent);
   border-radius: var(--radius-sm);
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25), 0 0 calc(18px * var(--glow-strength)) var(--accent-glow);
   opacity: 0;
   z-index: 10000;
   transition: transform 0.4s var(--ease-spring), opacity 0.3s ease;
@@ -1383,7 +1489,7 @@ input[type='password']:focus {
   color: #fff;
 }
     </style>
-  </head>
+</head>
   <body data-theme="dark">
     <div class="page">
       <div class="top-bar">
@@ -1597,6 +1703,23 @@ input[type='password']:focus {
                 </div>
               </div>
               <div class="settings-section">
+                <label for="glowStrength">Glow-Stärke</label>
+                <div class="glow-control">
+                  <span class="glow-icon" data-variant="low" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                      <circle cx="12" cy="12" r="5" fill="none" />
+                    </svg>
+                  </span>
+                  <input class="glow-slider" id="glowStrength" type="range" min="0" max="2" step="0.1" value="1" />
+                  <span class="glow-icon" data-variant="high" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round">
+                      <circle cx="12" cy="12" r="4.5" fill="none" />
+                      <path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1" />
+                    </svg>
+                  </span>
+                </div>
+              </div>
+              <div class="settings-section">
                 <label>Akzentfarbe</label>
                 <div class="accent-picker" id="accentPicker">
                   <button class="accent-option" data-color="#00d4ff" title="Cyan" style="--swatch: #00d4ff"></button>
@@ -1644,7 +1767,6 @@ input[type='password']:focus {
         </div>
       </div>
     </div>
-
     <script>
 (() => {
   const storageKey = "offlinewiki.settings";
@@ -1657,6 +1779,7 @@ input[type='password']:focus {
     openInNewTab: true,
     theme: "dark",
     buttonStyle: "default",
+    glowStrength: 1,
     accent: "#00d4ff",
     language: "de",
     languageSlugs: {
@@ -1722,6 +1845,11 @@ input[type='password']:focus {
       state.language = inferLanguageFromSlug(state.zimSlug);
     }
 
+    if (typeof state.glowStrength !== "number" || Number.isNaN(state.glowStrength)) {
+      state.glowStrength = defaults.glowStrength;
+    }
+    state.glowStrength = Math.min(2, Math.max(0, state.glowStrength));
+
     if (!state.languageSlugs) {
       state.languageSlugs = { ...defaults.languageSlugs };
     } else {
@@ -1768,6 +1896,7 @@ input[type='password']:focus {
     updateThemeToggleUI(state.theme);
     updateOpenTabToggleUI(state.openInNewTab);
     updateButtonStyleToggleUI(state.buttonStyle);
+    updateGlowStrengthUI(state.glowStrength);
   };
 
   const getSystemTheme = () => {
@@ -1796,9 +1925,8 @@ input[type='password']:focus {
     const accentVars = {
       "--accent": state.accent,
       "--accent-strong": state.accent,
-      "--accent-glow": `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`,
-      "--accent-subtle": `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.08)`,
-      "--border-glow": `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`
+      "--accent-rgb": `${rgb.r} ${rgb.g} ${rgb.b}`,
+      "--glow-strength": String(state.glowStrength)
     };
     for (const [key, value] of Object.entries(accentVars)) {
       document.documentElement.style.setProperty(key, value);
@@ -1842,6 +1970,56 @@ input[type='password']:focus {
     group.querySelectorAll(".toggle-option").forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.value === style);
     });
+  };
+
+  const updateGlowStrengthUI = (value) => {
+    const slider = document.getElementById("glowStrength");
+    if (!slider) return;
+    const numeric = Number(value);
+    const safeValue = Number.isNaN(numeric) ? defaults.glowStrength : numeric;
+    slider.value = String(safeValue);
+    const percent = Math.round((safeValue / 2) * 100);
+    slider.style.setProperty("--glow-percent", `${percent}%`);
+    slider.style.setProperty("--glow-thumb-icon", buildGlowThumbIcon(safeValue));
+  };
+
+  function buildGlowThumbIcon(value) {
+    const clamped = Math.min(2, Math.max(0, Number(value)));
+    let lines = "";
+    if (clamped > 0) {
+      const minRay = 1.4;
+      const maxRay = 4.6;
+      const inner = 6;
+      const rayLength = minRay + (maxRay - minRay) * (clamped / 2);
+      const outer = inner + rayLength;
+      const diagInner = inner * Math.SQRT1_2;
+      const diagOuter = outer * Math.SQRT1_2;
+      const fmt = (num) => Number(num.toFixed(2));
+      const line = (x1, y1, x2, y2) => (
+        `<line x1='${fmt(x1)}' y1='${fmt(y1)}' x2='${fmt(x2)}' y2='${fmt(y2)}'/>`
+      );
+      lines = [
+        line(12, 12 - inner, 12, 12 - outer),
+        line(12, 12 + inner, 12, 12 + outer),
+        line(12 - inner, 12, 12 - outer, 12),
+        line(12 + inner, 12, 12 + outer, 12),
+        line(12 - diagInner, 12 - diagInner, 12 - diagOuter, 12 - diagOuter),
+        line(12 + diagInner, 12 - diagInner, 12 + diagOuter, 12 - diagOuter),
+        line(12 - diagInner, 12 + diagInner, 12 - diagOuter, 12 + diagOuter),
+        line(12 + diagInner, 12 + diagInner, 12 + diagOuter, 12 + diagOuter)
+      ].join("");
+    }
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.6' stroke-linecap='round'><circle cx='12' cy='12' r='4' fill='none'/>${lines}</svg>`;
+    const encoded = encodeURIComponent(svg);
+    return `url("data:image/svg+xml,${encoded}")`;
+  }
+
+  const syncGlowSliderWidth = () => {
+    const slider = document.getElementById("glowStrength");
+    const toggleGroup = document.getElementById("buttonStyleToggleGroup");
+    if (!slider || !toggleGroup) return;
+    const width = Math.round(toggleGroup.getBoundingClientRect().width);
+    slider.style.setProperty("--glow-slider-width", `${width}px`);
   };
 
   let saveToastTimeout = null;
@@ -2018,7 +2196,10 @@ input[type='password']:focus {
     const tabs = document.querySelectorAll(".settings-tab");
     const panels = document.querySelectorAll(".settings-panel");
 
-    const open = () => settingsOverlay.classList.add("active");
+    const open = () => {
+      settingsOverlay.classList.add("active");
+      requestAnimationFrame(syncGlowSliderWidth);
+    };
     const close = () => settingsOverlay.classList.remove("active");
 
     settingsBtn.addEventListener("click", open);
@@ -2049,9 +2230,11 @@ input[type='password']:focus {
     renderRecent();
     renderFavorites();
     checkServer();
+    syncGlowSliderWidth();
     setInterval(checkServer, 20000);
 
     initSettingsOverlay();
+    window.addEventListener("resize", syncGlowSliderWidth);
 
     const langSwitchBtn = document.getElementById("langSwitchBtn");
     if (langSwitchBtn) {
@@ -2130,6 +2313,21 @@ input[type='password']:focus {
         showSaveToast();
       });
     });
+
+    const glowSlider = document.getElementById("glowStrength");
+    if (glowSlider) {
+      glowSlider.addEventListener("input", (event) => {
+        const nextValue = Number(event.target.value);
+        const safeValue = Number.isNaN(nextValue) ? defaults.glowStrength : nextValue;
+        state.glowStrength = Math.min(2, Math.max(0, safeValue));
+        applyAppearance();
+        updateGlowStrengthUI(state.glowStrength);
+      });
+      glowSlider.addEventListener("change", () => {
+        save();
+        showSaveToast();
+      });
+    }
 
     // Accent color picker
     document.getElementById("accentPicker").querySelectorAll(".accent-option").forEach((btn) => {
@@ -2212,5 +2410,5 @@ input[type='password']:focus {
   init();
 })();
     </script>
-  </body>
+</body>
 </html>

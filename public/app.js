@@ -9,6 +9,7 @@
     openInNewTab: true,
     theme: "dark",
     buttonStyle: "default",
+    glowStrength: 1,
     accent: "#00d4ff",
     language: "de",
     languageSlugs: {
@@ -74,6 +75,11 @@
       state.language = inferLanguageFromSlug(state.zimSlug);
     }
 
+    if (typeof state.glowStrength !== "number" || Number.isNaN(state.glowStrength)) {
+      state.glowStrength = defaults.glowStrength;
+    }
+    state.glowStrength = Math.min(2, Math.max(0, state.glowStrength));
+
     if (!state.languageSlugs) {
       state.languageSlugs = { ...defaults.languageSlugs };
     } else {
@@ -120,6 +126,7 @@
     updateThemeToggleUI(state.theme);
     updateOpenTabToggleUI(state.openInNewTab);
     updateButtonStyleToggleUI(state.buttonStyle);
+    updateGlowStrengthUI(state.glowStrength);
   };
 
   const getSystemTheme = () => {
@@ -148,9 +155,8 @@
     const accentVars = {
       "--accent": state.accent,
       "--accent-strong": state.accent,
-      "--accent-glow": `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`,
-      "--accent-subtle": `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.08)`,
-      "--border-glow": `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`
+      "--accent-rgb": `${rgb.r} ${rgb.g} ${rgb.b}`,
+      "--glow-strength": String(state.glowStrength)
     };
     for (const [key, value] of Object.entries(accentVars)) {
       document.documentElement.style.setProperty(key, value);
@@ -194,6 +200,56 @@
     group.querySelectorAll(".toggle-option").forEach((btn) => {
       btn.classList.toggle("active", btn.dataset.value === style);
     });
+  };
+
+  const updateGlowStrengthUI = (value) => {
+    const slider = document.getElementById("glowStrength");
+    if (!slider) return;
+    const numeric = Number(value);
+    const safeValue = Number.isNaN(numeric) ? defaults.glowStrength : numeric;
+    slider.value = String(safeValue);
+    const percent = Math.round((safeValue / 2) * 100);
+    slider.style.setProperty("--glow-percent", `${percent}%`);
+    slider.style.setProperty("--glow-thumb-icon", buildGlowThumbIcon(safeValue));
+  };
+
+  function buildGlowThumbIcon(value) {
+    const clamped = Math.min(2, Math.max(0, Number(value)));
+    let lines = "";
+    if (clamped > 0) {
+      const minRay = 1.4;
+      const maxRay = 4.6;
+      const inner = 6;
+      const rayLength = minRay + (maxRay - minRay) * (clamped / 2);
+      const outer = inner + rayLength;
+      const diagInner = inner * Math.SQRT1_2;
+      const diagOuter = outer * Math.SQRT1_2;
+      const fmt = (num) => Number(num.toFixed(2));
+      const line = (x1, y1, x2, y2) => (
+        `<line x1='${fmt(x1)}' y1='${fmt(y1)}' x2='${fmt(x2)}' y2='${fmt(y2)}'/>`
+      );
+      lines = [
+        line(12, 12 - inner, 12, 12 - outer),
+        line(12, 12 + inner, 12, 12 + outer),
+        line(12 - inner, 12, 12 - outer, 12),
+        line(12 + inner, 12, 12 + outer, 12),
+        line(12 - diagInner, 12 - diagInner, 12 - diagOuter, 12 - diagOuter),
+        line(12 + diagInner, 12 - diagInner, 12 + diagOuter, 12 - diagOuter),
+        line(12 - diagInner, 12 + diagInner, 12 - diagOuter, 12 + diagOuter),
+        line(12 + diagInner, 12 + diagInner, 12 + diagOuter, 12 + diagOuter)
+      ].join("");
+    }
+    const svg = `<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='1.6' stroke-linecap='round'><circle cx='12' cy='12' r='4' fill='none'/>${lines}</svg>`;
+    const encoded = encodeURIComponent(svg);
+    return `url("data:image/svg+xml,${encoded}")`;
+  }
+
+  const syncGlowSliderWidth = () => {
+    const slider = document.getElementById("glowStrength");
+    const toggleGroup = document.getElementById("buttonStyleToggleGroup");
+    if (!slider || !toggleGroup) return;
+    const width = Math.round(toggleGroup.getBoundingClientRect().width);
+    slider.style.setProperty("--glow-slider-width", `${width}px`);
   };
 
   let saveToastTimeout = null;
@@ -370,7 +426,10 @@
     const tabs = document.querySelectorAll(".settings-tab");
     const panels = document.querySelectorAll(".settings-panel");
 
-    const open = () => settingsOverlay.classList.add("active");
+    const open = () => {
+      settingsOverlay.classList.add("active");
+      requestAnimationFrame(syncGlowSliderWidth);
+    };
     const close = () => settingsOverlay.classList.remove("active");
 
     settingsBtn.addEventListener("click", open);
@@ -401,9 +460,11 @@
     renderRecent();
     renderFavorites();
     checkServer();
+    syncGlowSliderWidth();
     setInterval(checkServer, 20000);
 
     initSettingsOverlay();
+    window.addEventListener("resize", syncGlowSliderWidth);
 
     const langSwitchBtn = document.getElementById("langSwitchBtn");
     if (langSwitchBtn) {
@@ -482,6 +543,21 @@
         showSaveToast();
       });
     });
+
+    const glowSlider = document.getElementById("glowStrength");
+    if (glowSlider) {
+      glowSlider.addEventListener("input", (event) => {
+        const nextValue = Number(event.target.value);
+        const safeValue = Number.isNaN(nextValue) ? defaults.glowStrength : nextValue;
+        state.glowStrength = Math.min(2, Math.max(0, safeValue));
+        applyAppearance();
+        updateGlowStrengthUI(state.glowStrength);
+      });
+      glowSlider.addEventListener("change", () => {
+        save();
+        showSaveToast();
+      });
+    }
 
     // Accent color picker
     document.getElementById("accentPicker").querySelectorAll(".accent-option").forEach((btn) => {
