@@ -124,6 +124,15 @@
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
   };
 
+  const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : { r: 0, g: 212, b: 255 };
+  };
+
   const applyAppearance = () => {
     const effectiveTheme = state.theme === "system" ? getSystemTheme() : state.theme;
     document.body.setAttribute("data-theme", effectiveTheme);
@@ -132,8 +141,19 @@
     } else {
       document.body.removeAttribute("data-button-style");
     }
-    document.documentElement.style.setProperty("--accent", state.accent);
-    document.documentElement.style.setProperty("--accent-strong", state.accent);
+    // Set on both root and body to override CSS specificity
+    const rgb = hexToRgb(state.accent);
+    const accentVars = {
+      "--accent": state.accent,
+      "--accent-strong": state.accent,
+      "--accent-glow": `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`,
+      "--accent-subtle": `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.08)`,
+      "--border-glow": `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`
+    };
+    for (const [key, value] of Object.entries(accentVars)) {
+      document.documentElement.style.setProperty(key, value);
+      document.body.style.setProperty(key, value);
+    }
   };
 
   const applyLanguage = () => {

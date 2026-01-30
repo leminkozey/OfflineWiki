@@ -8,12 +8,12 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
 
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+
     <style>
 /* ═══════════════════════════════════════════════════════════════════
    OfflineWiki v1.1.0 – Glassmorphic Design System
    A distinctive, refined interface with depth and luminosity
    ═══════════════════════════════════════════════════════════════════ */
-
 :root {
   /* Core palette - Deep midnight with cyan luminescence */
   --bg: #06080f;
@@ -108,13 +108,9 @@ body::before {
   content: '';
   position: fixed;
   inset: 0;
-  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0, 212, 255, 0.06), transparent 50%);
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, var(--accent-subtle), transparent 50%);
   pointer-events: none;
   z-index: 0;
-}
-
-[data-theme='light'] body::before {
-  background: radial-gradient(ellipse 80% 50% at 50% 0%, rgba(0, 149, 204, 0.05), transparent 50%);
 }
 
 a {
@@ -382,7 +378,7 @@ a:hover {
   display: grid;
   place-items: center;
   background: var(--accent-subtle);
-  border: 1px solid rgba(0, 212, 255, 0.2);
+  border: 1px solid var(--border-glow);
   border-radius: var(--radius-md);
   transition: all 0.3s var(--ease-spring);
 }
@@ -945,26 +941,35 @@ a:hover {
 }
 
 /* ═══════════════════════════════════════════════════════════════════
-   Color Input
+   Accent Color Picker
    ═══════════════════════════════════════════════════════════════════ */
 
-.color-input {
-  width: 44px;
-  height: 44px;
+.accent-picker {
+  display: flex;
+  gap: 8px;
+}
+
+.accent-option {
+  width: 36px;
+  height: 36px;
   padding: 0;
-  background: transparent;
-  border: none;
+  background: var(--swatch);
+  border: 2px solid transparent;
+  border-radius: 50%;
   cursor: pointer;
+  transition: all 0.2s var(--ease-spring);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-.color-input::-webkit-color-swatch-wrapper {
-  padding: 2px;
+.accent-option:hover {
+  transform: scale(1.15);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
-.color-input::-webkit-color-swatch {
-  border: 2px solid var(--border);
-  border-radius: var(--radius-sm);
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+.accent-option.active {
+  border-color: var(--text);
+  transform: scale(1.1);
+  box-shadow: 0 0 0 3px var(--surface-2), 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 /* ═══════════════════════════════════════════════════════════════════
@@ -1550,8 +1555,14 @@ input[type='password']:focus {
                 </div>
               </div>
               <div class="settings-section">
-                <label for="accentInput">Akzentfarbe</label>
-                <input id="accentInput" type="color" class="color-input" />
+                <label>Akzentfarbe</label>
+                <div class="accent-picker" id="accentPicker">
+                  <button class="accent-option" data-color="#00d4ff" title="Cyan" style="--swatch: #00d4ff"></button>
+                  <button class="accent-option" data-color="#a855f7" title="Lila" style="--swatch: #a855f7"></button>
+                  <button class="accent-option" data-color="#ec4899" title="Pink" style="--swatch: #ec4899"></button>
+                  <button class="accent-option" data-color="#10b981" title="Grün" style="--swatch: #10b981"></button>
+                  <button class="accent-option" data-color="#f59e0b" title="Orange" style="--swatch: #f59e0b"></button>
+                </div>
               </div>
             </div>
             <div class="settings-panel" id="panel-server">
@@ -1700,8 +1711,16 @@ input[type='password']:focus {
     }
   };
 
+  const updateAccentPickerUI = (accent) => {
+    const picker = document.getElementById("accentPicker");
+    if (!picker) return;
+    picker.querySelectorAll(".accent-option").forEach((btn) => {
+      btn.classList.toggle("active", btn.dataset.color === accent);
+    });
+  };
+
   const updateInputs = () => {
-    document.getElementById("accentInput").value = state.accent;
+    updateAccentPickerUI(state.accent);
     updateThemeToggleUI(state.theme);
     updateOpenTabToggleUI(state.openInNewTab);
     updateButtonStyleToggleUI(state.buttonStyle);
@@ -1709,6 +1728,15 @@ input[type='password']:focus {
 
   const getSystemTheme = () => {
     return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  };
+
+  const hexToRgb = (hex) => {
+    const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex);
+    return result ? {
+      r: parseInt(result[1], 16),
+      g: parseInt(result[2], 16),
+      b: parseInt(result[3], 16)
+    } : { r: 0, g: 212, b: 255 };
   };
 
   const applyAppearance = () => {
@@ -1719,8 +1747,19 @@ input[type='password']:focus {
     } else {
       document.body.removeAttribute("data-button-style");
     }
-    document.documentElement.style.setProperty("--accent", state.accent);
-    document.documentElement.style.setProperty("--accent-strong", state.accent);
+    // Set on both root and body to override CSS specificity
+    const rgb = hexToRgb(state.accent);
+    const accentVars = {
+      "--accent": state.accent,
+      "--accent-strong": state.accent,
+      "--accent-glow": `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.15)`,
+      "--accent-subtle": `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.08)`,
+      "--border-glow": `rgba(${rgb.r}, ${rgb.g}, ${rgb.b}, 0.25)`
+    };
+    for (const [key, value] of Object.entries(accentVars)) {
+      document.documentElement.style.setProperty(key, value);
+      document.body.style.setProperty(key, value);
+    }
   };
 
   const applyLanguage = () => {
@@ -2042,15 +2081,15 @@ input[type='password']:focus {
       });
     });
 
-    // Auto-save accent color on change
-    document.getElementById("accentInput").addEventListener("input", () => {
-      state.accent = document.getElementById("accentInput").value || defaults.accent;
-      applyAppearance();
-      save();
-    });
-
-    document.getElementById("accentInput").addEventListener("change", () => {
-      showSaveToast();
+    // Accent color picker
+    document.getElementById("accentPicker").querySelectorAll(".accent-option").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        state.accent = btn.dataset.color;
+        applyAppearance();
+        updateAccentPickerUI(state.accent);
+        save();
+        showSaveToast();
+      });
     });
 
     document.getElementById("showServerCommands").addEventListener("click", () => {
@@ -2122,7 +2161,6 @@ input[type='password']:focus {
 
   init();
 })();
-
     </script>
   </body>
 </html>
