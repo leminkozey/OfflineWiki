@@ -15,10 +15,12 @@ OfflineWiki ist eine moderne Oberfläche für dein Kiwix Wikipedia-Archiv:
 - **Sprachwechsel** - Zwischen verschiedenen Wikipedia-Sprachen wechseln
 - **Server-Status** - Kiwix-Server Verbindung prüfen
 
-## Features v2.0.0
+## Features v2.2.0
 
 - **Glassmorphic Design** - Modernes UI mit Blur-Effekten
 - **Theme-Switcher** - Dark / System / Light mit Animationen
+- **Glow-Stärke** - Anpassbarer Glow-Effekt mit dynamischem Slider
+- **Akzentfarben** - 5 Farbpresets (Cyan, Lila, Pink, Grün, Orange)
 - **Auto-Save** - Einstellungen speichern automatisch
 - **Responsive** - Funktioniert auf Desktop und Mobile
 
@@ -112,7 +114,7 @@ Speichere häufig genutzte Suchbegriffe für schnellen Zugriff.
 
 ### Einstellungen
 
-- **Design**: Theme (Dark/System/Light), Button-Stil, Akzentfarbe
+- **Design**: Theme (Dark/System/Light), Button-Stil, Glow-Stärke, Akzentfarbe
 - **Server**: Server-Status, Befehle zum Kopieren
 - **Credits**: Entwickler-Info
 
