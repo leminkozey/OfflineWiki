@@ -9,6 +9,13 @@ backup_v1.0.0/
 .vscode/
 *.swp
 *.swo
+*.code-workspace
 
 # Logs
 *.log
+
+# Sensible Daten
+control-token.txt
+
+# Node
+node_modules/

@@ -6,14 +6,12 @@
     <title>OfflineWiki</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
-<style>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" />
+    <style>
 /* ═══════════════════════════════════════════════════════════════════
    OfflineWiki v1.1.0 – Glassmorphic Design System
    A distinctive, refined interface with depth and luminosity
    ═══════════════════════════════════════════════════════════════════ */
-
 
 :root {
   --glow-strength: 1;
@@ -1488,8 +1486,143 @@ input[type='password']:focus {
   background: var(--accent);
   color: #fff;
 }
-</style>
-</head>
+
+/* ═══════════════════════════════════════════════════════════════════
+   Knowledge of the Day - Flip Card
+   ═══════════════════════════════════════════════════════════════════ */
+
+.flip-card-section {
+  perspective: 1000px;
+  min-height: 280px;
+  cursor: pointer;
+  padding: 0;
+  overflow: visible;
+}
+
+.flip-card-section .flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  transition: transform 0.6s var(--ease-out-expo);
+  transform-style: preserve-3d;
+}
+
+.flip-card-section.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.flip-card-section:hover .flip-card-front,
+.flip-card-section:hover .flip-card-back {
+  border-color: var(--border-glow);
+  box-shadow:
+    0 0 20px var(--accent-glow),
+    0 0 40px var(--accent-subtle),
+    var(--shadow-elevated);
+}
+
+.flip-card-front {
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.flip-card-front .flip-icon {
+  width: 56px;
+  height: 56px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.flip-card-front .flip-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+}
+
+.flip-card-front .flip-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.kotd-header {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.kotd-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+
+.kotd-excerpt {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.kotd-link {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 12px 20px;
+  background: var(--accent-subtle);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  transition: background 0.2s ease, color 0.2s ease;
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.kotd-link:hover {
+  background: var(--accent);
+  color: #fff;
+}
+
+    </style>
+  </head>
   <body data-theme="dark">
     <div class="page">
       <div class="top-bar">
@@ -1584,6 +1717,27 @@ input[type='password']:focus {
         </div>
       </section>
 
+      <section class="card flip-card-section" id="knowledgeCard">
+        <div class="flip-card-inner">
+          <div class="flip-card-front">
+            <span class="flip-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 16v-4" />
+                <circle cx="12" cy="8" r="0.5" fill="currentColor" />
+              </svg>
+            </span>
+            <span class="flip-title">Knowledge of the Day</span>
+          </div>
+          <div class="flip-card-back">
+            <div class="kotd-header">Wusstest du:</div>
+            <div class="kotd-title" id="kotdTitle">Lädt...</div>
+            <div class="kotd-excerpt" id="kotdExcerpt"></div>
+            <a class="kotd-link" id="kotdLink" href="#" target="_blank" rel="noopener">Interessiert? Klick mich</a>
+          </div>
+        </div>
+      </section>
+
       <section class="card" id="recentPanel" hidden>
         <div class="section-title">
           <h3>Zuletzt besucht</h3>
@@ -1627,7 +1781,7 @@ input[type='password']:focus {
 
       <footer class="site-footer">
         <span>made by <a href="https://github.com/leminkozey" target="_blank" rel="noopener">leminkozey</a></span>
-        <span class="version">v2.2.0</span>
+        <span class="version">v2.3.0</span>
       </footer>
     </div>
 
@@ -1766,9 +1920,7 @@ input[type='password']:focus {
           </div>
         </div>
       </div>
-    </div>
-
-<script>
+    </div>    <script>
 (() => {
   const storageKey = "offlinewiki.settings";
   const recentKey = "offlinewiki.recent";
@@ -1791,7 +1943,7 @@ input[type='password']:focus {
 
   const credits = {
     username: "leminkozey",
-    version: "v2.2.0",
+    version: "v2.3.0",
     repoUrl: "https://github.com/leminkozey/OfflineWiki",
     repoLabel: "bleib up to date"
   };
@@ -2406,11 +2558,154 @@ input[type='password']:focus {
       renderFavorites();
     });
 
+    // Knowledge of the Day - Flip Card
+    initKnowledgeOfTheDay();
+
+  };
+
+  // ═══════════════════════════════════════════════════════════════════
+  // Knowledge of the Day
+  // ═══════════════════════════════════════════════════════════════════
+
+  // Cache key v2 - changed to invalidate old broken cache
+  const kotdCacheKey = "offlinewiki.kotd.v2";
+
+  const getDailyHash = () => {
+    const dateStr = new Date().toDateString();
+    let hash = 0;
+    for (let i = 0; i < dateStr.length; i++) {
+      hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
+      hash = hash & hash;
+    }
+    return Math.abs(hash);
+  };
+
+  const fetchKnowledgeOfTheDay = async () => {
+    const { base, slug } = buildUrls();
+    const today = new Date().toDateString();
+    const cacheKey = `${kotdCacheKey}.${today}`;
+
+    // Clear old cache entries
+    try {
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith(kotdCacheKey) && key !== cacheKey) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (e) {
+      // Ignore
+    }
+
+    // Check cache first
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        const data = JSON.parse(cached);
+        // Validate cache has proper data (not garbage)
+        if (data.title && data.url && data.title.length > 2 && !data.title.match(/^[a-zA-Z0-9]{20,}$/)) {
+          return data;
+        }
+        // Invalid cache, remove it
+        localStorage.removeItem(cacheKey);
+      }
+    } catch (e) {
+      // Cache miss or invalid
+      localStorage.removeItem(cacheKey);
+    }
+
+    try {
+      // Get suggestions with a letter based on daily hash
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const hash = getDailyHash();
+      const letter = letters[hash % letters.length];
+
+      const suggestUrl = `${base}/suggest?content=${slug}&term=${letter}&count=50`;
+      const res = await fetch(suggestUrl);
+
+      if (!res.ok) throw new Error("Suggest failed");
+
+      const suggestions = await res.json();
+
+      if (!suggestions || suggestions.length === 0) {
+        return null;
+      }
+
+      // Pick one based on daily hash
+      const index = hash % suggestions.length;
+      const article = suggestions[index];
+
+      // Kiwix suggest API returns:
+      // { value: "Article Title", label: "<b>Article</b> Title", path: "Article_Path", kind: "path" }
+      // Use 'value' for clean title, 'path' for URL
+      const articleTitle = (article.value || article.title || "Unbekannter Artikel")
+        .replace(/_/g, " ");
+
+      const articlePath = article.path || article.value || "";
+      const articleUrl = `${base}/${slug}/A/${encodeURIComponent(articlePath)}`;
+
+      const result = {
+        title: articleTitle,
+        excerpt: "Entdecke diesen interessanten Wikipedia-Artikel.",
+        url: articleUrl
+      };
+
+      // Cache for today
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify(result));
+      } catch (e) {
+        // Storage full, ignore
+      }
+
+      return result;
+
+    } catch (err) {
+      console.warn("Knowledge of the Day fetch failed:", err);
+      return null;
+    }
+  };
+
+  const initKnowledgeOfTheDay = () => {
+    const card = document.getElementById("knowledgeCard");
+    const titleEl = document.getElementById("kotdTitle");
+    const excerptEl = document.getElementById("kotdExcerpt");
+    const linkEl = document.getElementById("kotdLink");
+
+    if (!card) return;
+
+    // Toggle flip on click
+    card.addEventListener("click", (e) => {
+      // Don't flip if clicking the link
+      if (e.target.closest(".kotd-link")) return;
+      card.classList.toggle("flipped");
+    });
+
+    // Prevent link click from flipping card
+    if (linkEl) {
+      linkEl.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+    }
+
+    // Fetch and display article
+    fetchKnowledgeOfTheDay().then((data) => {
+      if (data) {
+        if (titleEl) titleEl.textContent = data.title;
+        if (excerptEl) excerptEl.textContent = data.excerpt;
+        if (linkEl) {
+          linkEl.href = data.url;
+          linkEl.target = state.openInNewTab ? "_blank" : "_self";
+        }
+      } else {
+        if (titleEl) titleEl.textContent = "Nicht verfügbar";
+        if (excerptEl) excerptEl.textContent = "Server offline oder keine Daten.";
+        if (linkEl) linkEl.style.display = "none";
+      }
+    });
   };
 
   init();
 })();
 
-</script>
-</body>
+    </script>
+  </body>
 </html>

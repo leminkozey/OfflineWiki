@@ -20,7 +20,7 @@
 
   const credits = {
     username: "leminkozey",
-    version: "v2.2.0",
+    version: "v2.3.0",
     repoUrl: "https://github.com/leminkozey/OfflineWiki",
     repoLabel: "bleib up to date"
   };
@@ -635,6 +635,149 @@
       renderFavorites();
     });
 
+    // Knowledge of the Day - Flip Card
+    initKnowledgeOfTheDay();
+
+  };
+
+  // ═══════════════════════════════════════════════════════════════════
+  // Knowledge of the Day
+  // ═══════════════════════════════════════════════════════════════════
+
+  // Cache key v2 - changed to invalidate old broken cache
+  const kotdCacheKey = "offlinewiki.kotd.v2";
+
+  const getDailyHash = () => {
+    const dateStr = new Date().toDateString();
+    let hash = 0;
+    for (let i = 0; i < dateStr.length; i++) {
+      hash = ((hash << 5) - hash) + dateStr.charCodeAt(i);
+      hash = hash & hash;
+    }
+    return Math.abs(hash);
+  };
+
+  const fetchKnowledgeOfTheDay = async () => {
+    const { base, slug } = buildUrls();
+    const today = new Date().toDateString();
+    const cacheKey = `${kotdCacheKey}.${today}`;
+
+    // Clear old cache entries
+    try {
+      Object.keys(localStorage).forEach((key) => {
+        if (key.startsWith(kotdCacheKey) && key !== cacheKey) {
+          localStorage.removeItem(key);
+        }
+      });
+    } catch (e) {
+      // Ignore
+    }
+
+    // Check cache first
+    try {
+      const cached = localStorage.getItem(cacheKey);
+      if (cached) {
+        const data = JSON.parse(cached);
+        // Validate cache has proper data (not garbage)
+        if (data.title && data.url && data.title.length > 2 && !data.title.match(/^[a-zA-Z0-9]{20,}$/)) {
+          return data;
+        }
+        // Invalid cache, remove it
+        localStorage.removeItem(cacheKey);
+      }
+    } catch (e) {
+      // Cache miss or invalid
+      localStorage.removeItem(cacheKey);
+    }
+
+    try {
+      // Get suggestions with a letter based on daily hash
+      const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+      const hash = getDailyHash();
+      const letter = letters[hash % letters.length];
+
+      const suggestUrl = `${base}/suggest?content=${slug}&term=${letter}&count=50`;
+      const res = await fetch(suggestUrl);
+
+      if (!res.ok) throw new Error("Suggest failed");
+
+      const suggestions = await res.json();
+
+      if (!suggestions || suggestions.length === 0) {
+        return null;
+      }
+
+      // Pick one based on daily hash
+      const index = hash % suggestions.length;
+      const article = suggestions[index];
+
+      // Kiwix suggest API returns:
+      // { value: "Article Title", label: "<b>Article</b> Title", path: "Article_Path", kind: "path" }
+      // Use 'value' for clean title, 'path' for URL
+      const articleTitle = (article.value || article.title || "Unbekannter Artikel")
+        .replace(/_/g, " ");
+
+      const articlePath = article.path || article.value || "";
+      const articleUrl = `${base}/${slug}/A/${encodeURIComponent(articlePath)}`;
+
+      const result = {
+        title: articleTitle,
+        excerpt: "Entdecke diesen interessanten Wikipedia-Artikel.",
+        url: articleUrl
+      };
+
+      // Cache for today
+      try {
+        localStorage.setItem(cacheKey, JSON.stringify(result));
+      } catch (e) {
+        // Storage full, ignore
+      }
+
+      return result;
+
+    } catch (err) {
+      console.warn("Knowledge of the Day fetch failed:", err);
+      return null;
+    }
+  };
+
+  const initKnowledgeOfTheDay = () => {
+    const card = document.getElementById("knowledgeCard");
+    const titleEl = document.getElementById("kotdTitle");
+    const excerptEl = document.getElementById("kotdExcerpt");
+    const linkEl = document.getElementById("kotdLink");
+
+    if (!card) return;
+
+    // Toggle flip on click
+    card.addEventListener("click", (e) => {
+      // Don't flip if clicking the link
+      if (e.target.closest(".kotd-link")) return;
+      card.classList.toggle("flipped");
+    });
+
+    // Prevent link click from flipping card
+    if (linkEl) {
+      linkEl.addEventListener("click", (e) => {
+        e.stopPropagation();
+      });
+    }
+
+    // Fetch and display article
+    fetchKnowledgeOfTheDay().then((data) => {
+      if (data) {
+        if (titleEl) titleEl.textContent = data.title;
+        if (excerptEl) excerptEl.textContent = data.excerpt;
+        if (linkEl) {
+          linkEl.href = data.url;
+          linkEl.target = state.openInNewTab ? "_blank" : "_self";
+        }
+      } else {
+        if (titleEl) titleEl.textContent = "Nicht verfügbar";
+        if (excerptEl) excerptEl.textContent = "Server offline oder keine Daten.";
+        if (linkEl) linkEl.style.display = "none";
+      }
+    });
   };
 
   init();

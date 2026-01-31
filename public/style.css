@@ -1478,3 +1478,137 @@ input[type='password']:focus {
   background: var(--accent);
   color: #fff;
 }
+
+/* ═══════════════════════════════════════════════════════════════════
+   Knowledge of the Day - Flip Card
+   ═══════════════════════════════════════════════════════════════════ */
+
+.flip-card-section {
+  perspective: 1000px;
+  min-height: 280px;
+  cursor: pointer;
+  padding: 0;
+  overflow: visible;
+}
+
+.flip-card-section .flip-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  transition: transform 0.6s var(--ease-out-expo);
+  transform-style: preserve-3d;
+}
+
+.flip-card-section.flipped .flip-card-inner {
+  transform: rotateY(180deg);
+}
+
+.flip-card-front,
+.flip-card-back {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  min-height: 280px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  border-radius: var(--radius-xl);
+  background: var(--surface);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 32px;
+  transition: box-shadow 0.3s ease, border-color 0.3s ease;
+}
+
+.flip-card-section:hover .flip-card-front,
+.flip-card-section:hover .flip-card-back {
+  border-color: var(--border-glow);
+  box-shadow:
+    0 0 20px var(--accent-glow),
+    0 0 40px var(--accent-subtle),
+    var(--shadow-elevated);
+}
+
+.flip-card-front {
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  gap: 20px;
+}
+
+.flip-card-front .flip-icon {
+  width: 56px;
+  height: 56px;
+  color: var(--accent);
+  flex-shrink: 0;
+}
+
+.flip-card-front .flip-icon svg {
+  width: 100%;
+  height: 100%;
+  stroke: currentColor;
+}
+
+.flip-card-front .flip-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text);
+  text-align: center;
+}
+
+.flip-card-back {
+  transform: rotateY(180deg);
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.kotd-header {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: 8px;
+}
+
+.kotd-title {
+  font-size: 1.6rem;
+  font-weight: 600;
+  color: var(--text);
+  line-height: 1.3;
+  margin-bottom: 12px;
+}
+
+.kotd-excerpt {
+  font-size: 1rem;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  display: -webkit-box;
+  -webkit-line-clamp: 4;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  flex: 1;
+}
+
+.kotd-link {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 12px 20px;
+  background: var(--accent-subtle);
+  border-radius: var(--radius-sm);
+  text-align: center;
+  transition: background 0.2s ease, color 0.2s ease;
+  align-self: flex-start;
+  margin-top: auto;
+}
+
+.kotd-link:hover {
+  background: var(--accent);
+  color: #fff;
+}
