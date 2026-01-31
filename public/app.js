@@ -640,9 +640,7 @@
 
   };
 
-  // ═══════════════════════════════════════════════════════════════════
   // Knowledge of the Day
-  // ═══════════════════════════════════════════════════════════════════
 
   // Cache key v2 - changed to invalidate old broken cache
   const kotdCacheKey = "offlinewiki.kotd.v2";
